@@ -16,7 +16,6 @@ namespace W3FLA.Entities
         {
             mongoClient = new MongoClient(GetEnvironmentVariable("DbConnectionString"));
             database = mongoClient.GetDatabase(GetEnvironmentVariable("DbName"));
-
         }
 
         private static string GetEnvironmentVariable(string name)
@@ -29,10 +28,10 @@ namespace W3FLA.Entities
             return await collection.Find(_ => true).ToListAsync();
         }
 
-        public async Task DeleteKey(string name)
+        public async Task DeleteKey(string id)
         {
             var collection = database.GetCollection<Keys>(GetEnvironmentVariable("DbCollectionKeys"));
-            var filter = Builders<Keys>.Filter.Eq(s => s.Name.ToLower(), name.ToLower());
+            var filter = Builders<Keys>.Filter.Eq(s => s.Id, id);
             await collection.DeleteOneAsync(filter);
         }
 

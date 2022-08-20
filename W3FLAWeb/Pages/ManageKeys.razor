@@ -1,11 +1,19 @@
 ﻿@page "/manage"
 
 @inject HttpClient client
+@inject DataService service
 
 <div class="row">
+    @if (Show)
+    {
+        <div class="alert alert-info">
+            @Message
+        </div>
+    }
+
     <div class="col">
-        <input type="text" class="form-control" />
-        <button class="btn btn-primary mt-2 mb-2">Add</button>
+        <input type="text" @bind="Key" class="form-control" />
+        <button class="btn btn-primary mt-2 mb-2" @onclick="onAdd">Add</button>
         @if (Keys.Count > 0)
         {
             <div class="table-responsive">
@@ -22,8 +30,8 @@
                         @foreach (var key in Keys)
                         {
                             <tr>
-                                <td>@key</td>
-                                <td><a href="#">Delete</a></td>
+                                <td>@key.Name</td>
+                                <td><a href="javascript:void(0)" @onclick="()=>{onDelete(key.Id).Wait();}">Delete</a></td>
                             </tr>
                         }
 
@@ -44,14 +52,68 @@
 
 
 @code {
-    public List<string> Keys { get; set; } = new List<string>();
+    public List<Keys> Keys { get; set; } = new List<Keys>();
+    public bool Show { get; set; }
+    public string Message { get; set; }
+    public string Key { get; set; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            Keys = await client.GetFromJsonAsync<List<string>>("https://kernaldemo.azurewebsites.net/api/FetchKeys?code=6nsQDebvtCALOm3NFf65o-H8chPJumUMoSth45SgWHm3AzFump-p7g==");
-            StateHasChanged();
+            await LoadKeys();
         }
+    }
+
+    async Task LoadKeys()
+    {
+        try
+        {
+            Keys = await service.GetKeys();
+        }
+        catch (Exception ex)
+        {
+            Message = "Error! " + ex.Message;
+        }
+
+        StateHasChanged();
+    }
+
+    async Task onAdd()
+    {
+        Show = false;
+        try
+        {
+            if (!string.IsNullOrEmpty(Key))
+            {
+                await service.CreateKey(Key);
+                await LoadKeys();
+            }
+        }
+        catch (Exception ex)
+        {
+            Show = true;
+            Message = "Error! " + ex.Message;
+        }
+
+        StateHasChanged();
+    }
+
+    async Task onDelete(string id)
+    {
+        Show = false;
+        try
+        {
+            await service.DeleteKey(id);
+            await LoadKeys();
+        }
+        catch (Exception ex)
+        {
+            Show = true;
+            Message = "Error! " + ex.Message;
+        }
+
+        StateHasChanged();
+
     }
 }
