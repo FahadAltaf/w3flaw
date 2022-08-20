@@ -1,0 +1,66 @@
+﻿@inject HttpClient httpClient
+
+
+<div class="accordion-item">
+    <h2 class="accordion-header" id="headingTwo">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#@Website.Replace(".","-")" aria-expanded="false" aria-controls="@Website.Replace(".","-")">
+            @Website @if (Loading)
+            {
+                <span class="text-info">&nbsp;(Loading...)</span>
+            }
+            else
+            {
+                <span class="text-success">&nbsp;(Completed)</span>
+
+            }
+        </button>
+    </h2>
+    <div id="@Website.Replace(".","-")" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+        <div class="accordion-body">
+            @if (!Loading)
+            {
+                @foreach (var steam in Posts)
+                {
+                    <ul>
+                        @foreach (var topic in steam.topics)
+                        {
+                            <li><a target="_blank" href="@($"{steam.website}/t/{topic.slug}/{topic.id}")">@topic.title</a></li>
+                            //   var post = steam.posts[steam.topics.IndexOf(topic)];
+                        }
+                    </ul>
+                }
+
+            }
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+@code {
+    public List<Listing> Posts { get; set; } = new List<Listing> { };
+    public bool Loading { get; set; }
+    [Parameter]
+    public string SearchKey { get; set; }
+
+    [Parameter]
+    public string Website { get; set; }
+
+    protected async override Task OnInitializedAsync()
+    {
+        Loading = true;
+        StateHasChanged();
+
+        var response = await httpClient.GetFromJsonAsync<List<Listing>>($"https://kernaldemo.azurewebsites.net/api/SearchWeb3?code=s4FuzT-eyau27G1ckCc9B5mf2a6KV7-7VdeKnMWispxBAzFugnr8lQ==&q={SearchKey}&website={Website}");
+        if (response.Count > 0)
+        {
+            Posts.AddRange(response);
+        }
+
+        Loading = false;
+        StateHasChanged();
+    }
+}

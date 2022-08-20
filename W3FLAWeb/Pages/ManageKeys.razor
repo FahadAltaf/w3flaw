@@ -1,0 +1,57 @@
+﻿@page "/manage"
+
+@inject HttpClient client
+
+<div class="row">
+    <div class="col">
+        <input type="text" class="form-control" />
+        <button class="btn btn-primary mt-2 mb-2">Add</button>
+        @if (Keys.Count > 0)
+        {
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>
+                                Keyword
+                            </th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var key in Keys)
+                        {
+                            <tr>
+                                <td>@key</td>
+                                <td><a href="#">Delete</a></td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                No key has been add yet.
+            </div>
+
+        }
+    </div>
+</div>
+
+
+
+@code {
+    public List<string> Keys { get; set; } = new List<string>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Keys = await client.GetFromJsonAsync<List<string>>("https://kernaldemo.azurewebsites.net/api/FetchKeys?code=6nsQDebvtCALOm3NFf65o-H8chPJumUMoSth45SgWHm3AzFump-p7g==");
+            StateHasChanged();
+        }
+    }
+}

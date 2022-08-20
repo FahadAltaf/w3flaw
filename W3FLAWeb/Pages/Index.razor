@@ -1,0 +1,56 @@
+﻿@page "/"
+@inject HttpClient httpClient
+
+<input type="text" class="form-control mb-2" placeholder="Enter search term" @bind-value="SearchKey" />
+<button class="btn btn-primary mb-2" @onclick="onSearch">Search</button>
+
+@if (Websites.Count > 0)
+{
+    <div class="accordion" id="accordionExample">
+        @foreach (var item in Websites)
+        {
+            <PostComp Website="@item" SearchKey="@SearchKey" />
+        }
+    </div>
+}
+else
+{
+
+}
+
+
+
+
+
+
+@code {
+    public string SearchKey { get; set; }
+    public List<string> Websites { get; set; } = new List<string> { };
+
+    async Task Rest()
+    {
+        Websites.RemoveAll(x=>x==x);
+        StateHasChanged();
+        await Task.CompletedTask;
+    }
+    async Task onSearch()
+    {
+        await Rest();
+        await Task.Delay(500);
+        if (!string.IsNullOrEmpty(SearchKey))
+        {
+            Websites.Add("forum.shapeshift.com");
+            Websites.Add("research.lido.fi");
+            Websites.Add("gov.gitcoin.co");
+            Websites.Add("forum.gnosis.io");
+            Websites.Add("forum.bankless.community");
+            Websites.Add("forum.rook.fi");
+            Websites.Add("radicle.community");
+
+            StateHasChanged();
+        }
+        await Task.CompletedTask;
+    }
+
+}
+
