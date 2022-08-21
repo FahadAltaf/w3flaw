@@ -11,16 +11,11 @@ namespace W3FLA.Entities
     {
         IMongoClient mongoClient;
         IMongoDatabase database;
-        string connectionString = "mongodb+srv://admin:pakistan@cluster0.dabt0.mongodb.net/champdatatek-db?retryWrites=true&w=majority";
-        string dbname = "w3fla";
-        string ckeys = "keys";
-        string cwebsites = "websites";
-        string cdata = "dataset";
 
         public DataService()
         {
-            mongoClient = new MongoClient(connectionString);
-            database = mongoClient.GetDatabase(dbname);
+            mongoClient = new MongoClient(GetEnvironmentVariable("DbConnectionString"));
+            database = mongoClient.GetDatabase(GetEnvironmentVariable("DbName"));
         }
 
         private static string GetEnvironmentVariable(string name)
@@ -29,20 +24,20 @@ namespace W3FLA.Entities
         }
         public async Task<List<Keys>> GetKeys()
         {
-            var collection = database.GetCollection<Keys>(ckeys);
+            var collection = database.GetCollection<Keys>(GetEnvironmentVariable("DbCollectionKeys"));
             return await collection.Find(_ => true).ToListAsync();
         }
 
         public async Task DeleteKey(string id)
         {
-            var collection = database.GetCollection<Keys>(ckeys);
+            var collection = database.GetCollection<Keys>(GetEnvironmentVariable("DbCollectionKeys"));
             var filter = Builders<Keys>.Filter.Eq(s => s.Id, id);
             await collection.DeleteOneAsync(filter);
         }
 
         public async Task CreateKey(string name)
         {
-            var collection = database.GetCollection<Keys>(ckeys);
+            var collection = database.GetCollection<Keys>(GetEnvironmentVariable("DbCollectionKeys"));
             if (!string.IsNullOrEmpty(name))
             {
                 var keys = await GetKeys();
@@ -60,19 +55,19 @@ namespace W3FLA.Entities
 
         public async Task<List<Websites>> GetWebsites()
         {
-            var collection = database.GetCollection<Websites>(cwebsites);
+            var collection = database.GetCollection<Websites>(GetEnvironmentVariable("DbCollectionWebsites"));
             return await collection.Find(_ => true).ToListAsync();
         }
 
         public async Task<List<Database>> GetData()
         {
-            var collection = database.GetCollection<Database>(cdata);
+            var collection = database.GetCollection<Database>(GetEnvironmentVariable("DbCollectionData"));
             return await collection.Find(_ => true).ToListAsync();
         }
 
         public async Task InsertData(List<Database> data)
         {
-            var collection = database.GetCollection<Database>(cdata);
+            var collection = database.GetCollection<Database>(GetEnvironmentVariable("DbCollectionData"));
             await collection.InsertManyAsync(data);
         }
     }

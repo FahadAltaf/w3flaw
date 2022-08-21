@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W3FLAFunctions", "W3FLAFunctions\W3FLAFunctions.csproj", "{055A5277-2230-479C-8BF9-07BE6A2C353F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "W3FLAFunctions", "W3FLAFunctions\W3FLAFunctions.csproj", "{055A5277-2230-479C-8BF9-07BE6A2C353F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W3FLAWeb", "W3FLAWeb\W3FLAWeb.csproj", "{478B3D09-1D08-4B19-B540-8F847F03C229}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "W3FLAWeb", "W3FLAWeb\W3FLAWeb.csproj", "{478B3D09-1D08-4B19-B540-8F847F03C229}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "W3FLA.Entities", "W3FLA.Entities\W3FLA.Entities.csproj", "{52D32881-E9D1-4EF6-B6B9-B98BC030DC29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "W3FLA.Entities", "W3FLA.Entities\W3FLA.Entities.csproj", "{52D32881-E9D1-4EF6-B6B9-B98BC030DC29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
