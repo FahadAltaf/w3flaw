@@ -32,8 +32,16 @@ namespace W3FLA.Entities
         public string Website { get; set; }
         public int TopicId { get; set; }
         public string Data { get; set; } //Serialized DataModel
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 
+    public class Websites
+    {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
+        public string Name { get; set; }
+    }
     public class DataModel
     {
         public Topic Topic { get; set; }

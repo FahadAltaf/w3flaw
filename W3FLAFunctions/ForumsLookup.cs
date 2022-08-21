@@ -14,25 +14,26 @@ namespace W3FLAFunctions
     public class ForumsLookup
     {
         [FunctionName("ForumsLookup")]
-        public async Task Run([TimerTrigger("0 * */12 * * *")] TimerInfo myTimer, ILogger log)
+        public async Task Run([TimerTrigger("0 0 */12 * * *")] TimerInfo myTimer, ILogger log)
         {
             try
             {
-                List<Database> dbData = new List<Database>();
+                List<Database> dbData =await new DataService().GetData();
 
                 var keys = await new DataService().GetKeys();
-                var websites = new List<string>();
+                var websites = await new DataService().GetWebsites();
 
-                List<Database> records = new List<Database>();
-
+                List<Database> toSend = new List<Database>();
                 foreach (var website in websites)
                 {
                     foreach (var query in keys)
                     {
+                        List<Database> records = new List<Database>();
+
                         List<Listing> data = new List<Listing>();
                         for (int i = 1; i <= 20; i++)
                         {
-                            var result = GetData($"https://{website}", query.Name, i, log);
+                            var result = GetData($"https://{website.Name}", query.Name, i, log);
                             if (result != null && result.posts.Count > 0)
                             {
                                 data.Add(result);
@@ -47,7 +48,7 @@ namespace W3FLAFunctions
                                 {
                                     Key = query.Name.ToLower(),
                                     TopicId = topic.id,
-                                    Website = website,
+                                    Website = website.Name,
                                     Data = JsonSerializer.Serialize(new DataModel
                                     {
                                         Post = d.posts[d.topics.IndexOf(topic)],
@@ -61,14 +62,20 @@ namespace W3FLAFunctions
                                     records.Add(entry);
                             }
                         }
+
+                        if (records.Count > 0)
+                        {
+                            //insert into database
+                            toSend.AddRange(records);
+                            await new DataService().InsertData(records);
+                            log.LogInformation("New records found: "+records.Count);
+                        }
                     }
                 }
 
-                if (records.Count > 0) { 
-                //insert into database
-                }
-                //Send an email
 
+                //Send an email
+                log.LogInformation("Email has bee sent with records count: "+toSend.Count);
             }
             catch (Exception ex)
             {
